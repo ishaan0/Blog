@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Blog.Domain", "Blog.Domain\Blog.Domain.fsproj", "{D0644B3E-F86A-4CF4-AFBA-CD679944F70B}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2AF25A00-81CC-4CAD-BB4D-1EAB09EB6AEA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog.Application", "Blog.Application\Blog.Application.csproj", "{BD467942-7FE5-4383-8CCD-00CA52CFE479}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blog.Application", "Blog.Application\Blog.Application.csproj", "{BD467942-7FE5-4383-8CCD-00CA52CFE479}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog.Infrastructure", "Blog.Infrastructure\Blog.Infrastructure.csproj", "{94103D5C-43BC-45DC-83F1-C25048772788}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blog.Infrastructure", "Blog.Infrastructure\Blog.Infrastructure.csproj", "{94103D5C-43BC-45DC-83F1-C25048772788}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog.Api", "Blog.Api\Blog.Api.csproj", "{1AF822FA-70D6-4320-972F-0EC7E16475EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blog.Api", "Blog.Api\Blog.Api.csproj", "{1AF822FA-70D6-4320-972F-0EC7E16475EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog.Domain", "Blog.Domain\Blog.Domain.csproj", "{A3505DA5-2FC8-403C-BCA8-16D63F938A41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D0644B3E-F86A-4CF4-AFBA-CD679944F70B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D0644B3E-F86A-4CF4-AFBA-CD679944F70B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D0644B3E-F86A-4CF4-AFBA-CD679944F70B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D0644B3E-F86A-4CF4-AFBA-CD679944F70B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BD467942-7FE5-4383-8CCD-00CA52CFE479}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BD467942-7FE5-4383-8CCD-00CA52CFE479}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD467942-7FE5-4383-8CCD-00CA52CFE479}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -35,15 +31,19 @@ Global
 		{1AF822FA-70D6-4320-972F-0EC7E16475EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AF822FA-70D6-4320-972F-0EC7E16475EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AF822FA-70D6-4320-972F-0EC7E16475EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3505DA5-2FC8-403C-BCA8-16D63F938A41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3505DA5-2FC8-403C-BCA8-16D63F938A41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3505DA5-2FC8-403C-BCA8-16D63F938A41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3505DA5-2FC8-403C-BCA8-16D63F938A41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{D0644B3E-F86A-4CF4-AFBA-CD679944F70B} = {2AF25A00-81CC-4CAD-BB4D-1EAB09EB6AEA}
 		{BD467942-7FE5-4383-8CCD-00CA52CFE479} = {2AF25A00-81CC-4CAD-BB4D-1EAB09EB6AEA}
 		{94103D5C-43BC-45DC-83F1-C25048772788} = {2AF25A00-81CC-4CAD-BB4D-1EAB09EB6AEA}
 		{1AF822FA-70D6-4320-972F-0EC7E16475EE} = {2AF25A00-81CC-4CAD-BB4D-1EAB09EB6AEA}
+		{A3505DA5-2FC8-403C-BCA8-16D63F938A41} = {2AF25A00-81CC-4CAD-BB4D-1EAB09EB6AEA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {68A22E39-7821-4BBC-ADC5-19BA85F901A3}
