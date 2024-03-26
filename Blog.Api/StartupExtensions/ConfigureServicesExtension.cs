@@ -1,4 +1,5 @@
-﻿using Blog.Application.ServiceContracts;
+﻿using Blog.Api.Middlewares;
+using Blog.Application.ServiceContracts;
 using Blog.Application.Services;
 using Blog.Domain.IdentityEntities;
 using Blog.Infrastructure.Data;
@@ -18,6 +19,10 @@ namespace Blog.Api.StartupExtensions
             this IServiceCollection services,
             IConfiguration configuration)
         {
+            services
+                .AddProblemDetails()
+                .AddExceptionHandler<GlobalExceptionHandler>();
+
             services.AddControllers(options =>
             {
                 //Authorization policy
