@@ -1,4 +1,5 @@
-﻿using Blog.Domain.IdentityEntities;
+﻿using Blog.Domain.Enums;
+using Blog.Domain.IdentityEntities;
 
 namespace Blog.Domain.Entities
 {
@@ -16,11 +17,5 @@ namespace Blog.Domain.Entities
         public int ViewCount { get; set; }
         public int LikeCount { get; set; }
         public ICollection<Comment>? Comments { get; set; }
-    }
-
-    public enum ArticleStatus
-    {
-        Public,
-        Private
     }
 }

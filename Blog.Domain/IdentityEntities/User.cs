@@ -1,4 +1,5 @@
 ﻿using Blog.Domain.Entities;
+using Blog.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace Blog.Domain.IdentityEntities
@@ -13,13 +14,5 @@ namespace Blog.Domain.IdentityEntities
         public ICollection<Comment>? Comments { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime RefreshTokenExpiration { get; set; }
-    }
-
-    public enum UserStatus
-    {
-        Pending,
-        Approved,
-        Blocked,
-        Declined
     }
 }
