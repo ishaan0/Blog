@@ -2,6 +2,7 @@
 using Blog.Application.ServiceContracts;
 using Blog.Application.Services;
 using Blog.Domain.IdentityEntities;
+using Blog.Domain.Interfaces.Persistence;
 using Blog.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -33,11 +34,7 @@ namespace Blog.Api.StartupExtensions
             services.AddServices();
             services.AddSwagger();
 
-            // Database connection
-            services.AddDbContext<ApplicationDbContext>(options =>
-            {
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-            });
+            services.AddDbContext(configuration);
 
             services.AddAuthentication(configuration);
 
@@ -49,6 +46,19 @@ namespace Blog.Api.StartupExtensions
         private static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddTransient<IJwtService, JwtService>();
+
+            return services;
+        }
+
+        private static IServiceCollection AddDbContext(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            });
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }
