@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Reflection;
 
 namespace Blog.Api.StartupExtensions
 {
@@ -39,6 +40,10 @@ namespace Blog.Api.StartupExtensions
             services.AddAuthentication(configuration);
 
             services.AddAuthorization(options => { });
+
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
             return services;
         }

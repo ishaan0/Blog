@@ -4,6 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddConfigureServices(builder.Configuration);
 
+
 var app = builder.Build();
 
 app.UseExceptionHandler();
