@@ -6,7 +6,7 @@ namespace Blog.Application.ServiceContracts
 {
     public interface IJwtService
     {
-        AuthenticationResponse CreateJwtToken(User user);
+        public Task<AuthenticationResponse> CreateJwtToken(User user);
         public ClaimsPrincipal? GetPrincipalFromJwtToken(string? token);
     }
 }
