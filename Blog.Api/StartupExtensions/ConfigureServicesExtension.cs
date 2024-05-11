@@ -5,12 +5,11 @@ using Blog.Domain.IdentityEntities;
 using Blog.Domain.Interfaces.Persistence;
 using Blog.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 namespace Blog.Api.StartupExtensions
@@ -25,12 +24,7 @@ namespace Blog.Api.StartupExtensions
                 .AddProblemDetails()
                 .AddExceptionHandler<GlobalExceptionHandler>();
 
-            services.AddControllers(options =>
-            {
-                //Authorization policy
-                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
-            });
+            services.AddControllers(options => { });
 
             services.AddServices();
             services.AddSwagger();
@@ -71,7 +65,36 @@ namespace Blog.Api.StartupExtensions
         private static IServiceCollection AddSwagger(this IServiceCollection services)
         {
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(setup =>
+            {
+                setup.SwaggerDoc("v1", new OpenApiInfo { Title = "Hotel booking API", Version = "v1" });
+
+                setup.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter a valid token",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "Bearer"
+                });
+
+                setup.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+
+            });
 
             return services;
         }
@@ -100,9 +123,12 @@ namespace Blog.Api.StartupExtensions
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             .AddJwtBearer(options =>
             {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ValidateAudience = true,

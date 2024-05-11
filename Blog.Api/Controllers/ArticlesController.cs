@@ -22,4 +22,5 @@ public class ArticlesController(ISender mediator, IMapper mapper) : ControllerBa
 
         return Ok(articles.Items);
     }
+
 }
