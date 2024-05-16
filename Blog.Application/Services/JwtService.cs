@@ -1,5 +1,5 @@
-﻿using Blog.Application.Dtos;
-using Blog.Application.ServiceContracts;
+﻿using Blog.Application.ServiceContracts;
+using Blog.Application.Users.Common;
 using Blog.Domain.IdentityEntities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;

@@ -1,9 +1,14 @@
-﻿using Blog.Application.Dtos;
+﻿using AutoMapper;
+using Blog.Api.Dtos.Auth;
+using Blog.Application.Dtos;
 using Blog.Application.ServiceContracts;
-using Blog.Domain.Enums;
+using Blog.Application.Users.Common;
+using Blog.Application.Users.Register;
 using Blog.Domain.Exceptions;
 using Blog.Domain.IdentityEntities;
 using Blog.Domain.Models;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -12,69 +17,56 @@ namespace Blog.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AccountController : ControllerBase
+public class AuthController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly RoleManager<Role> _roleManager;
     private readonly IJwtService _jwtService;
+    private readonly IValidator<RegisterRequest> _registerRequestValidator;
+    private readonly IMapper _mapper;
+    private readonly ISender _mediator;
 
-    public AccountController(
+    public AuthController(
         UserManager<User> userManager,
         SignInManager<User> signInManager,
         RoleManager<Role> roleManager,
-        IJwtService jwtService)
+        IJwtService jwtService,
+        IValidator<RegisterRequest> registerRequestValidator,
+        IMapper mapper,
+        ISender mediator)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _roleManager = roleManager;
         _jwtService = jwtService;
+        _registerRequestValidator = registerRequestValidator;
+        _mapper = mapper;
+        _mediator = mediator;
     }
 
     [HttpPost("register")]
     [ProducesResponseType(typeof(ApiResponse<AuthenticationResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<User>> Register(RegisterDTO registerDTO)
+    public async Task<ActionResult<ApiResponse<AuthenticationResponse>>> Register(
+        RegisterRequest request,
+        CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
+        var result = await _registerRequestValidator.ValidateAsync(request);
+        if (!result.IsValid)
         {
-            var errorMessage = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-            return Problem(errorMessage);
+            var errorMessage = string.Join(" | ", result.Errors.Select(error => error));
+            throw new BadRequestException(errorMessage);
         }
 
-        User user = new User()
-        {
-            Name = registerDTO.Name,
-            UserName = registerDTO.Email,
-            Email = registerDTO.Email
-        };
+        var registerCommand = _mapper.Map<RegisterCommand>(request);
 
-        bool validRole = await _roleManager.RoleExistsAsync(nameof(UserType.User));
-        if (!validRole)
-        {
-            throw new BadRequestException("User role doen't exist");
-        }
+        var authenticationResponse = await _mediator.Send(registerCommand, cancellationToken);
 
-        IdentityResult result = await _userManager.CreateAsync(user, registerDTO.Password);
-
-        if (result.Succeeded)
-        {
-            await _signInManager.SignInAsync(user, isPersistent: false);
-            var authenticationResponse = await _jwtService.CreateJwtToken(user);
-            user.RefreshToken = authenticationResponse.RefreshToken;
-            user.RefreshTokenExpiration = authenticationResponse.RefreshTokenExpiration;
-            await _userManager.UpdateAsync(user);
-            await _userManager.AddToRoleAsync(user, nameof(UserType.User));
-            return Ok(new ApiResponse<AuthenticationResponse>(
+        return Ok(new ApiResponse<AuthenticationResponse>(
                 true, 200,
                 "User registered successfully",
                 new List<AuthenticationResponse> { authenticationResponse }));
-        }
-        else
-        {
-            var errorMessage = string.Join(" | ", result.Errors.Select(e => e.Description));
-            throw new CustomException(errorMessage);
-        }
     }
 
     [HttpPost("login")]

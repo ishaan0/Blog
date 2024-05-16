@@ -1,16 +1,19 @@
-﻿using Blog.Api.Middlewares;
+﻿using Blog.Api.Dtos.Auth;
+using Blog.Api.Middlewares;
+using Blog.Api.Validators.Auth;
+using Blog.Application;
 using Blog.Application.ServiceContracts;
 using Blog.Application.Services;
 using Blog.Domain.IdentityEntities;
 using Blog.Domain.Interfaces.Persistence;
 using Blog.Infrastructure.Data;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 
 namespace Blog.Api.StartupExtensions
 {
@@ -35,9 +38,15 @@ namespace Blog.Api.StartupExtensions
 
             services.AddAuthorization(options => { });
 
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            var api = typeof(IApiAssemblyMaker);
+            var application = typeof(IApplicationAssemblyMaker);
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(api.Assembly);
+                cfg.RegisterServicesFromAssembly(application.Assembly);
+            });
 
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+            services.AddAutoMapper(api.Assembly, application.Assembly);
 
             return services;
         }
@@ -45,6 +54,8 @@ namespace Blog.Api.StartupExtensions
         private static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddTransient<IJwtService, JwtService>();
+
+            services.AddScoped<IValidator<RegisterRequest>, RegisterRequestValidator>();
 
             return services;
         }

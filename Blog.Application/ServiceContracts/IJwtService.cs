@@ -1,4 +1,4 @@
-﻿using Blog.Application.Dtos;
+﻿using Blog.Application.Users.Common;
 using Blog.Domain.IdentityEntities;
 using System.Security.Claims;
 
