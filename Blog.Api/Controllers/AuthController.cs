@@ -3,6 +3,7 @@ using Blog.Api.Dtos.Auth;
 using Blog.Application.Dtos;
 using Blog.Application.ServiceContracts;
 using Blog.Application.Users.Common;
+using Blog.Application.Users.Login;
 using Blog.Application.Users.Register;
 using Blog.Domain.Exceptions;
 using Blog.Domain.IdentityEntities;
@@ -52,13 +53,6 @@ public class AuthController : ControllerBase
         RegisterRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _registerRequestValidator.ValidateAsync(request);
-        if (!result.IsValid)
-        {
-            var errorMessage = string.Join(" | ", result.Errors.Select(error => error));
-            throw new BadRequestException(errorMessage);
-        }
-
         var registerCommand = _mapper.Map<RegisterCommand>(request);
 
         var authenticationResponse = await _mediator.Send(registerCommand, cancellationToken);
@@ -69,36 +63,22 @@ public class AuthController : ControllerBase
                 new List<AuthenticationResponse> { authenticationResponse }));
     }
 
+
     [HttpPost("login")]
     [ProducesResponseType(typeof(ApiResponse<AuthenticationResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Login(LoginDTO loginDTO)
+    public async Task<ActionResult<ApiResponse<AuthenticationResponse>>> Login(
+        LoginRequest request,
+        CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-        {
-            string errorMessage = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-            throw new BadRequestException(errorMessage);
-        }
+        var loginCommand = _mapper.Map<LoginCommand>(request);
 
-        var result = await _signInManager.PasswordSignInAsync(loginDTO.Email, loginDTO.Password, isPersistent: false, lockoutOnFailure: false);
+        AuthenticationResponse authenticationResponse = await _mediator.Send(loginCommand, cancellationToken);
 
-        if (result.Succeeded)
-        {
-            User? user = await _userManager.FindByEmailAsync(loginDTO.Email);
-            var authenticationResponse = await _jwtService.CreateJwtToken(user);
-            user.RefreshToken = authenticationResponse.RefreshToken;
-            user.RefreshTokenExpiration = authenticationResponse.RefreshTokenExpiration;
-            await _userManager.UpdateAsync(user);
-            return Ok(new ApiResponse<AuthenticationResponse>(
+        return Ok(new ApiResponse<AuthenticationResponse>(
                 true, 200,
-                "User logged in successfully",
+                "User registered successfully",
                 new List<AuthenticationResponse> { authenticationResponse }));
-        }
-        else
-        {
-            throw new BadRequestException("Invalid email or password");
-        }
-
     }
 
     [HttpPost("logout")]
@@ -106,21 +86,6 @@ public class AuthController : ControllerBase
     {
         await _signInManager.SignOutAsync();
         return NoContent();
-    }
-
-    [HttpGet("isEmailAlreadyRegistered")]
-    public async Task<IActionResult> IsEmailAlreadyRegistered(string email)
-    {
-        User? user = await _userManager.FindByEmailAsync(email);
-
-        if (user == null)
-        {
-            return Ok(true);
-        }
-        else
-        {
-            return Ok(false);
-        }
     }
 
     [HttpGet("refreshToken")]

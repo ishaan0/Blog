@@ -4,6 +4,7 @@ using Blog.Application.Users.Common;
 using Blog.Domain.Enums;
 using Blog.Domain.Exceptions;
 using Blog.Domain.IdentityEntities;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -14,6 +15,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Authentic
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly RoleManager<Role> _roleManager;
+    private readonly IValidator<RegisterCommand> _registerCommandValidator;
     private readonly IMapper _mapper;
     private readonly IJwtService _jwtService;
 
@@ -21,12 +23,14 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Authentic
         UserManager<User> userManager,
         SignInManager<User> signInManager,
         RoleManager<Role> roleManager,
+        IValidator<RegisterCommand> registerCommandValidator,
         IMapper mapper,
         IJwtService jwtService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _roleManager = roleManager;
+        _registerCommandValidator = registerCommandValidator;
         _mapper = mapper;
         _jwtService = jwtService;
     }
@@ -34,6 +38,13 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Authentic
         RegisterCommand request,
         CancellationToken cancellationToken = default)
     {
+        var validatorResult = await _registerCommandValidator.ValidateAsync(request);
+        if (!validatorResult.IsValid)
+        {
+            var errorMessage = string.Join(" | ", validatorResult.Errors.Select(error => error));
+            throw new BadRequestException(errorMessage);
+        }
+
         bool validRole = await _roleManager.RoleExistsAsync(nameof(UserType.User));
         if (!validRole) throw new BadRequestException("User role doen't exist");
 

@@ -1,9 +1,10 @@
-﻿using Blog.Api.Dtos.Auth;
-using Blog.Api.Middlewares;
-using Blog.Api.Validators.Auth;
+﻿using Blog.Api.Middlewares;
 using Blog.Application;
 using Blog.Application.ServiceContracts;
 using Blog.Application.Services;
+using Blog.Application.Users.Login;
+using Blog.Application.Users.Register;
+using Blog.Application.Validators.Auth;
 using Blog.Domain.IdentityEntities;
 using Blog.Domain.Interfaces.Persistence;
 using Blog.Infrastructure.Data;
@@ -55,7 +56,8 @@ namespace Blog.Api.StartupExtensions
         {
             services.AddTransient<IJwtService, JwtService>();
 
-            services.AddScoped<IValidator<RegisterRequest>, RegisterRequestValidator>();
+            services.AddScoped<IValidator<RegisterCommand>, RegisterCommandValidator>();
+            services.AddScoped<IValidator<LoginCommand>, LoginCommandValidator>();
 
             return services;
         }
