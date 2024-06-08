@@ -1,9 +1,11 @@
 ﻿using Blog.Api.Middlewares;
 using Blog.Application;
+using Blog.Application.Articles.CreateArticle;
 using Blog.Application.ServiceContracts;
 using Blog.Application.Services;
 using Blog.Application.Users.Login;
 using Blog.Application.Users.Register;
+using Blog.Application.Validators.Article;
 using Blog.Application.Validators.Auth;
 using Blog.Domain.IdentityEntities;
 using Blog.Domain.Interfaces.Persistence;
@@ -58,6 +60,7 @@ namespace Blog.Api.StartupExtensions
 
             services.AddScoped<IValidator<RegisterCommand>, RegisterCommandValidator>();
             services.AddScoped<IValidator<LoginCommand>, LoginCommandValidator>();
+            services.AddScoped<IValidator<CreateArticleCommand>, CreateArticleCommandValidator>();
 
             return services;
         }
