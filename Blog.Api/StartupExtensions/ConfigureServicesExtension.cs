@@ -51,6 +51,17 @@ namespace Blog.Api.StartupExtensions
 
             services.AddAutoMapper(api.Assembly, application.Assembly);
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "CorsPolicy",
+                    builder => builder
+                                .AllowAnyOrigin()
+                                .WithMethods("POST", "GET", "PUT", "DELETE", "PATCH")
+                                .WithHeaders("accept", "content-type")
+                );
+            });
+
             return services;
         }
 
