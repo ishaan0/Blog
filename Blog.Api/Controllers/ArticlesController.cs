@@ -13,7 +13,7 @@ namespace Blog.Api.Controllers;
 [ApiController]
 public class ArticlesController(ISender mediator, IMapper mapper) : ControllerBase
 {
-    [HttpGet("")]
+    [HttpGet]
     public async Task<ActionResult<IEnumerable<ArticleResponse>>> Articles(
         [FromQuery] ArticlesGetRequest articlesGetRequest,
         CancellationToken cancellationToken)
@@ -25,8 +25,8 @@ public class ArticlesController(ISender mediator, IMapper mapper) : ControllerBa
         return Ok(articles.Items);
     }
 
-    [HttpPost("")]
-    public async Task<ActionResult<ApiResponse<string>>> CreateArticle(
+    [HttpPost]
+    public async Task<ActionResult<ApiResponse<string>>> Articles(
         [FromBody] ArticleCreationRequest request,
         CancellationToken cancellationToken)
     {

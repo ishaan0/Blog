@@ -1,10 +1,12 @@
-﻿namespace Blog.Api.Dtos.Common;
+﻿using Blog.Domain.Enums;
+
+namespace Blog.Api.Dtos.Common;
 
 public class ResourcesQueryRequest
 {
     private const int MaxPageSize = 20;
     private int _pageSize;
-    public string? SortOrder { get; init; }
+    public SortOrder? SortOrder { get; init; }
     public string? SortColumn { get; init; }
     public int PageNumber { get; init; } = 1;
 
