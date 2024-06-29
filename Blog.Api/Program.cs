@@ -1,11 +1,18 @@
 using Blog.Api.StartupExtensions;
 using Blog.Domain.IdentityEntities;
 using Microsoft.AspNetCore.Identity;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddConfigureServices(builder.Configuration);
 
+builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) =>
+{
+    loggerConfiguration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services);
+});
 
 var app = builder.Build();
 
