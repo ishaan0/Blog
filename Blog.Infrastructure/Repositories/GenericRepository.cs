@@ -16,49 +16,22 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         _dbSet = _context.Set<T>();
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default)
-    {
-        return await _dbSet
-                .AsNoTracking()
-                .ToListAsync(cancellationToken);
-    }
+    public IQueryable<T> GetAll(
+        bool trackChanges,
+        CancellationToken cancellationToken = default) => !trackChanges ? _dbSet.AsNoTracking() : _dbSet;
 
-    public async Task<IEnumerable<T>> GetByConditionAsync(
-        Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
-    {
-        return await _dbSet
-                .AsNoTracking()
-                .Where(expression)
-                .ToListAsync(cancellationToken);
-    }
+    public IQueryable<T> GetByCondition(
+        Expression<Func<T, bool>> expression,
+        bool trackChanges,
+        CancellationToken cancellationToken = default) => !trackChanges
+        ? _dbSet.AsNoTracking().Where(expression) : _dbSet.Where(expression);
 
-    public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        return await _dbSet.FindAsync(new object[] { id }, cancellationToken);
-    }
+    public void Create(T entity, CancellationToken cancellationToken = default) => _dbSet.Add(entity);
 
-    public async Task CreateAsync(T entity, CancellationToken cancellationToken = default)
-    {
-        if (entity == null) throw new ArgumentNullException(nameof(entity));
-        await _dbSet.AddAsync(entity, cancellationToken);
-    }
+    public void Update(T entity, CancellationToken cancellationToken = default) => _dbSet.Update(entity);
 
-    public Task UpdateAsync(T entity, CancellationToken cancellationToken = default)
-    {
-        if (entity == null) throw new ArgumentNullException(nameof(entity));
-        _dbSet.Update(entity);
-        return Task.CompletedTask;
-    }
+    public void Delete(T entity, CancellationToken cancellationToken = default) => _dbSet.Remove(entity);
 
-    public Task DeleteAsync(T entity, CancellationToken cancellationToken = default)
-    {
-        if (entity == null) throw new ArgumentNullException(nameof(entity));
-        _dbSet.Remove(entity);
-        return Task.CompletedTask;
-    }
-
-    public async Task SaveAsync(CancellationToken cancellationToken = default)
-    {
-        await _context.SaveChangesAsync(cancellationToken);
-    }
+    public async Task SaveAsync(
+        CancellationToken cancellationToken = default) => await _context.SaveChangesAsync(cancellationToken);
 }
