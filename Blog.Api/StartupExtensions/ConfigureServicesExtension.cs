@@ -7,9 +7,12 @@ using Blog.Application.Users.Login;
 using Blog.Application.Users.Register;
 using Blog.Application.Validators.Article;
 using Blog.Application.Validators.Auth;
+using Blog.Domain.Entities;
 using Blog.Domain.IdentityEntities;
 using Blog.Domain.Interfaces.Persistence;
+using Blog.Domain.Interfaces.Persistence.Repositories;
 using Blog.Infrastructure.Data;
+using Blog.Infrastructure.Repositories;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -67,11 +70,14 @@ namespace Blog.Api.StartupExtensions
 
         private static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddScoped<IGenericRepository<Article>, GenericRepository<Article>>();
+
             services.AddTransient<IJwtService, JwtService>();
 
             services.AddScoped<IValidator<RegisterCommand>, RegisterCommandValidator>();
             services.AddScoped<IValidator<LoginCommand>, LoginCommandValidator>();
             services.AddScoped<IValidator<CreateArticleCommand>, CreateArticleCommandValidator>();
+
 
             return services;
         }
