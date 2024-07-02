@@ -3,6 +3,8 @@ using Blog.Api.Dtos.Articles;
 using Blog.Application.Articles.Common;
 using Blog.Application.Articles.CreateArticle;
 using Blog.Application.Articles.GetArticles;
+using Blog.Application.Articles.GetById;
+using Blog.Domain.Exceptions;
 using Blog.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -43,4 +45,17 @@ public class ArticlesController(ISender mediator, IMapper mapper) : ControllerBa
            ));
     }
 
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<ApiResponse<ArticleResponse>>> Articles(Guid id, CancellationToken cancellationToken)
+    {
+        var query = new GetArticleByIdQuery() { Id = id };
+
+        var article = await mediator.Send(query, cancellationToken);
+
+        return Ok(new ApiResponse<ArticleResponse>(
+            true,
+            StatusCodes.Status200OK,
+            "Article found",
+            new List<ArticleResponse>() { article }));
+    }
 }
