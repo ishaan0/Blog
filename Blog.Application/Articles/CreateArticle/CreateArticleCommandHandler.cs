@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Blog.Application.Articles.Common;
 using Blog.Domain.Entities;
 using Blog.Domain.Exceptions;
 using Blog.Infrastructure.Data;
@@ -11,9 +12,9 @@ public class CreateArticleCommandHandler(
     IMapper mapper,
     IValidator<CreateArticleCommand> createArticleCommandValidator,
     ApplicationDbContext context
-    ) : IRequestHandler<CreateArticleCommand, CreateArticleResponse>
+    ) : IRequestHandler<CreateArticleCommand, ArticleResponse>
 {
-    public async Task<CreateArticleResponse> Handle(
+    public async Task<ArticleResponse> Handle(
         CreateArticleCommand request,
         CancellationToken cancellationToken)
     {
@@ -30,7 +31,6 @@ public class CreateArticleCommandHandler(
         var createdArticle = await context.Articles.AddAsync(article);
         await context.SaveChangesAsync();
 
-        return new CreateArticleResponse(createdArticle.Entity.Id);
-
+        return mapper.Map<ArticleResponse>(createdArticle.Entity);
     }
 }

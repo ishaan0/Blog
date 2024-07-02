@@ -4,7 +4,6 @@ using Blog.Application.Articles.Common;
 using Blog.Application.Articles.CreateArticle;
 using Blog.Application.Articles.GetArticles;
 using Blog.Application.Articles.GetById;
-using Blog.Domain.Exceptions;
 using Blog.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +15,7 @@ namespace Blog.Api.Controllers;
 public class ArticlesController(ISender mediator, IMapper mapper) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ArticleResponse>>> Articles(
+    public async Task<ActionResult<IEnumerable<ArticleResponse>>> GetArticles(
         [FromQuery] ArticlesGetRequest articlesGetRequest,
         CancellationToken cancellationToken)
     {
@@ -28,25 +27,23 @@ public class ArticlesController(ISender mediator, IMapper mapper) : ControllerBa
     }
 
     [HttpPost]
-    public async Task<ActionResult<ApiResponse<string>>> Articles(
+    public async Task<ActionResult<ApiResponse<ArticleResponse>>> CreateArticle(
         [FromBody] ArticleCreationRequest request,
         CancellationToken cancellationToken)
     {
         var command = mapper.Map<CreateArticleCommand>(request);
 
-        var response = await mediator.Send(command, cancellationToken);
-
-        return Created("testing url",
-            new ApiResponse<string>(
+        var article = await mediator.Send(command, cancellationToken);
+        return CreatedAtRoute("GetArticleById", new { id = article.Id },
+            new ApiResponse<ArticleResponse>(
                 true,
                 StatusCodes.Status201Created,
-                response.ArticleId.ToString(),
-                null
-           ));
+                "Article created",
+                new List<ArticleResponse>() { article }));
     }
 
-    [HttpGet("{id:guid}")]
-    public async Task<ActionResult<ApiResponse<ArticleResponse>>> Articles(Guid id, CancellationToken cancellationToken)
+    [HttpGet("{id:guid}", Name = "GetArticleById")]
+    public async Task<ActionResult<ApiResponse<ArticleResponse>>> GetArticleById(Guid id, CancellationToken cancellationToken)
     {
         var query = new GetArticleByIdQuery() { Id = id };
 

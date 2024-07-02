@@ -1,9 +1,10 @@
-﻿using Blog.Domain.Enums;
+﻿using Blog.Application.Articles.Common;
+using Blog.Domain.Enums;
 using MediatR;
 
 namespace Blog.Application.Articles.CreateArticle;
 
-public class CreateArticleCommand : IRequest<CreateArticleResponse>
+public class CreateArticleCommand : IRequest<ArticleResponse>
 {
     public string Title { get; set; }
     public string Body { get; set; }
