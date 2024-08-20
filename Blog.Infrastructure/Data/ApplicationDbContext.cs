@@ -22,6 +22,9 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, Guid>
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new ArticleConfiguration());
         modelBuilder.ApplyConfiguration(new CommentConfiguration());
+        modelBuilder.ApplyConfiguration(new LikeConfiguration());
+        modelBuilder.ApplyConfiguration(new SubscriptionConfiguration());
+        modelBuilder.ApplyConfiguration(new TagConfiguration());
     }
 
     public override int SaveChanges()
