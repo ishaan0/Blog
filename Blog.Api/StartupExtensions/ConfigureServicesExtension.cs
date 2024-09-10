@@ -1,7 +1,8 @@
 ﻿using Blog.Api.Middlewares;
 using Blog.Application;
 using Blog.Application.Articles.CreateArticle;
-using Blog.Application.ServiceContracts;
+using Blog.Application.Interfaces;
+using Blog.Application.Interfaces.Repositories;
 using Blog.Application.Services;
 using Blog.Application.Users.Login;
 using Blog.Application.Users.Register;
@@ -9,8 +10,6 @@ using Blog.Application.Validators.Article;
 using Blog.Application.Validators.Auth;
 using Blog.Domain.Entities;
 using Blog.Domain.IdentityEntities;
-using Blog.Domain.Interfaces.Persistence;
-using Blog.Domain.Interfaces.Persistence.Repositories;
 using Blog.Infrastructure.Data;
 using Blog.Infrastructure.Repositories;
 using FluentValidation;
@@ -71,6 +70,7 @@ namespace Blog.Api.StartupExtensions
         private static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddScoped<IGenericRepository<Article>, GenericRepository<Article>>();
+            services.AddScoped<IArticleRepository, ArticleRepository>();
 
             services.AddTransient<IJwtService, JwtService>();
 

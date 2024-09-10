@@ -1,7 +1,7 @@
 ﻿using Blog.Domain.IdentityEntities;
 using Blog.Domain.Models;
 
-namespace Blog.Domain.Interfaces.Persistence.Repositories;
+namespace Blog.Application.Interfaces.Repositories;
 
 public interface IUserRepository
 {

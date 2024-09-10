@@ -1,14 +1,14 @@
 ﻿using Blog.Application.Articles.Common;
-using Blog.Domain.Enums;
+using Blog.Application.Dtos.Common;
 using Blog.Domain.Models;
 using MediatR;
 
 namespace Blog.Application.Articles.GetArticles;
 
-public class GetArticlesQuery : IRequest<PaginatedList<ArticleResponse>>
+public class GetArticlesQuery : ResourceQueryDto, IRequest<PaginatedList<ArticleResponse>>
 {
-    public int PageNumber { get; init; }
-    public int PageSize { get; init; }
-    public SortOrder? SortOrder { get; init; }
-    public string? SortColumn { get; init; }
+    public string? Tag { get; init; }
+    public Guid? OwnerId { get; init; }
+    public string? Search { get; init; }
+    public bool? Published { get; init; }
 }

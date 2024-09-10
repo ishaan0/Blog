@@ -1,16 +1,12 @@
 ﻿using Blog.Application.Articles.CreateArticle;
-using Blog.Infrastructure.Data;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Application.Validators.Article;
 
 public class CreateArticleCommandValidator : AbstractValidator<CreateArticleCommand>
 {
-    private ApplicationDbContext _context;
-    public CreateArticleCommandValidator(ApplicationDbContext context)
+    public CreateArticleCommandValidator()
     {
-        _context = context;
 
         RuleFor(x => x.Title)
             .NotEmpty()
@@ -30,6 +26,7 @@ public class CreateArticleCommandValidator : AbstractValidator<CreateArticleComm
 
     private async Task<bool> BeValidUser(Guid authorId, CancellationToken cancellationToken = default)
     {
-        return await _context.Users.AnyAsync(u => u.Id == authorId, cancellationToken);
+        throw new NotImplementedException();
+        //return await _context.Users.AnyAsync(u => u.Id == authorId, cancellationToken);
     }
 }

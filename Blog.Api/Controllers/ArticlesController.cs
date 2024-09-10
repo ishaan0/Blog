@@ -4,6 +4,7 @@ using Blog.Application.Articles.Common;
 using Blog.Application.Articles.CreateArticle;
 using Blog.Application.Articles.GetArticles;
 using Blog.Application.Articles.GetById;
+using Blog.Application.Dtos.Articles;
 using Blog.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -16,10 +17,10 @@ public class ArticlesController(ISender mediator, IMapper mapper) : ControllerBa
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ArticleResponse>>> GetArticles(
-        [FromQuery] ArticlesGetRequest articlesGetRequest,
+        [FromQuery] GetArticlesDto getArticleDto,
         CancellationToken cancellationToken)
     {
-        var query = mapper.Map<GetArticlesQuery>(articlesGetRequest);
+        var query = mapper.Map<GetArticlesQuery>(getArticleDto);
 
         var articles = await mediator.Send(query, cancellationToken);
 
@@ -55,4 +56,6 @@ public class ArticlesController(ISender mediator, IMapper mapper) : ControllerBa
             "Article found",
             new List<ArticleResponse>() { article }));
     }
+    
+
 }

@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Linq.Expressions;
 
-namespace Blog.Infrastructure.Extensions;
+namespace Blog.Application.Extensions;
 
 public static class SortingExtensions
 {

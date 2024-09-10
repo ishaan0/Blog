@@ -1,4 +1,4 @@
-﻿using Blog.Application.ServiceContracts;
+﻿using Blog.Application.Interfaces;
 using Blog.Application.Users.Common;
 using Blog.Domain.Exceptions;
 using Blog.Domain.IdentityEntities;

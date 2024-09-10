@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Blog.Api.Dtos.Auth;
 using Blog.Application.Dtos;
-using Blog.Application.ServiceContracts;
+using Blog.Application.Interfaces;
 using Blog.Application.Users.Common;
 using Blog.Application.Users.Login;
 using Blog.Application.Users.Register;

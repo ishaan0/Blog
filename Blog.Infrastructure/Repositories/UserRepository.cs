@@ -1,6 +1,6 @@
-﻿using Blog.Domain.Exceptions;
+﻿using Blog.Application.Interfaces.Repositories;
+using Blog.Domain.Exceptions;
 using Blog.Domain.IdentityEntities;
-using Blog.Domain.Interfaces.Persistence.Repositories;
 using Blog.Domain.Messages;
 using Blog.Domain.Models;
 using Blog.Infrastructure.Data;

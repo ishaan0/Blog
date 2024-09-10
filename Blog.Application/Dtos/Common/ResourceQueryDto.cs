@@ -1,8 +1,8 @@
 ﻿using Blog.Domain.Enums;
 
-namespace Blog.Api.Dtos.Common;
+namespace Blog.Application.Dtos.Common;
 
-public class ResourcesQueryRequest
+public class ResourceQueryDto
 {
     private const int MaxPageSize = 20;
     private int _pageSize;

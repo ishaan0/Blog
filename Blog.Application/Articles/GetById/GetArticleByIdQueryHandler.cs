@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Blog.Application.Articles.Common;
+using Blog.Application.Interfaces.Repositories;
 using Blog.Domain.Entities;
 using Blog.Domain.Exceptions;
-using Blog.Domain.Interfaces.Persistence.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
