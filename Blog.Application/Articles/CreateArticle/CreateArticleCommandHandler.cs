@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-using Blog.Application.Articles.Common;
+using Blog.Application.Interfaces.Repositories;
 using Blog.Domain.Entities;
 using Blog.Domain.Exceptions;
-using Blog.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
 
@@ -10,11 +9,11 @@ namespace Blog.Application.Articles.CreateArticle;
 
 public class CreateArticleCommandHandler(
     IMapper mapper,
-    IValidator<CreateArticleCommand> createArticleCommandValidator,
-    ApplicationDbContext context
-    ) : IRequestHandler<CreateArticleCommand, ArticleResponse>
+    IArticleRepository articleRepository,
+    IValidator<CreateArticleCommand> createArticleCommandValidator
+    ) : IRequestHandler<CreateArticleCommand, CreateArticleResponse>
 {
-    public async Task<ArticleResponse> Handle(
+    public async Task<CreateArticleResponse> Handle(
         CreateArticleCommand request,
         CancellationToken cancellationToken)
     {
@@ -22,15 +21,15 @@ public class CreateArticleCommandHandler(
 
         if (!validatorResult.IsValid)
         {
-            var errorMessage = string.Join(" | ", validatorResult.Errors.Select(error => error));
-            throw new BadRequestException(errorMessage);
+            var errormessage = string.Join(" | ", validatorResult.Errors.Select(error => error));
+            throw new BadRequestException(errormessage);
         }
 
         Article article = mapper.Map<Article>(request);
 
-        var createdArticle = await context.Articles.AddAsync(article);
-        await context.SaveChangesAsync();
+        articleRepository.Create(article);
+        await articleRepository.SaveAsync();
 
-        return mapper.Map<ArticleResponse>(createdArticle.Entity);
+        return new CreateArticleResponse(article.Id);
     }
 }

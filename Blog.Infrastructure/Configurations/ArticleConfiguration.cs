@@ -14,18 +14,13 @@ public class ArticleConfiguration : IEntityTypeConfiguration<Article>
             .IsRequired()
             .HasMaxLength(20);
 
+        builder.Property(a => a.Body)
+            .IsRequired();
+
         builder.HasOne(a => a.Author)
             .WithMany(u => u.Articles)
             .HasForeignKey(a => a.AuthorId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasMany(a => a.Comments)
-            .WithOne(c => c.Article)
-            .HasForeignKey(c => c.ArticleId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
-
-
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Blog.Domain.Interfaces.Persistence;
+﻿namespace Blog.Application.Interfaces.Repositories;
 
 public interface IUnitOfWork
 {

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Blog.Application.Articles.CreateArticle;
 
-public class CreateArticleCommand : IRequest<ArticleResponse>
+public class CreateArticleCommand : IRequest<CreateArticleResponse>
 {
     public string Title { get; set; }
     public string Body { get; set; }

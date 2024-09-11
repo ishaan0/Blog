@@ -1,6 +1,6 @@
-﻿using Blog.Domain.Exceptions;
+﻿using Blog.Application.Interfaces.Repositories;
+using Blog.Domain.Exceptions;
 using Blog.Domain.IdentityEntities;
-using Blog.Domain.Interfaces.Persistence.Repositories;
 using Blog.Domain.Messages;
 using Blog.Domain.Models;
 using Blog.Infrastructure.Data;
@@ -8,8 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Infrastructure.Repositories;
 
-internal class UserRepository(ApplicationDbContext context) : IUserRepository
+public class UserRepository(ApplicationDbContext context) : IUserRepository
 {
+    public async Task<bool> AuthorExistAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await context.Users.AnyAsync(u => u.Id == id);
+    }
+
     public async Task CreateAsync(User user, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(user);
@@ -56,4 +61,5 @@ internal class UserRepository(ApplicationDbContext context) : IUserRepository
     {
         throw new NotImplementedException();
     }
+
 }

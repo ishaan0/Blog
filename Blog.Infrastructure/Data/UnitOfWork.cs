@@ -1,4 +1,4 @@
-﻿using Blog.Domain.Interfaces.Persistence;
+﻿using Blog.Application.Interfaces.Repositories;
 
 namespace Blog.Infrastructure.Data;
 

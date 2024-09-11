@@ -1,7 +1,7 @@
 ﻿using Blog.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Blog.Infrastructure.Extensions;
+namespace Blog.Application.Extensions;
 
 public static class PaginationExtensions
 {

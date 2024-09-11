@@ -15,19 +15,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(20);
 
         builder.Property(u => u.Bio)
+            .IsRequired()
             .HasMaxLength(50);
-
-        builder.HasMany(u => u.Articles)
-            .WithOne(a => a.Author)
-            .HasForeignKey(a => a.AuthorId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasMany(u => u.Comments)
-            .WithOne(c => c.User)
-            .HasForeignKey(a => a.UserId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Restrict); ;
-
     }
 }
