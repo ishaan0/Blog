@@ -71,6 +71,7 @@ namespace Blog.Api.StartupExtensions
         {
             services.AddScoped<IGenericRepository<Article>, GenericRepository<Article>>();
             services.AddScoped<IArticleRepository, ArticleRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddTransient<IJwtService, JwtService>();
 

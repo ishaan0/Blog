@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Blog.Api.Dtos.Auth;
+using Blog.Api.Helpers;
 using Blog.Application.Dtos;
 using Blog.Application.Interfaces;
 using Blog.Application.Users.Common;
@@ -49,7 +50,7 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     [ProducesResponseType(typeof(ApiResponse<AuthenticationResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ApiResponse<AuthenticationResponse>>> Register(
+    public async Task<IActionResult> Register(
         RegisterRequest request,
         CancellationToken cancellationToken)
     {
@@ -57,17 +58,14 @@ public class AuthController : ControllerBase
 
         var authenticationResponse = await _mediator.Send(registerCommand, cancellationToken);
 
-        return Ok(new ApiResponse<AuthenticationResponse>(
-                true, 200,
-                "User registered successfully",
-                new List<AuthenticationResponse> { authenticationResponse }));
+        return ApiResponseHelper.Success(authenticationResponse, "User registered successfully");
     }
 
 
     [HttpPost("login")]
     [ProducesResponseType(typeof(ApiResponse<AuthenticationResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ApiResponse<AuthenticationResponse>>> Login(
+    public async Task<IActionResult> Login(
         LoginRequest request,
         CancellationToken cancellationToken)
     {
@@ -75,10 +73,7 @@ public class AuthController : ControllerBase
 
         AuthenticationResponse authenticationResponse = await _mediator.Send(loginCommand, cancellationToken);
 
-        return Ok(new ApiResponse<AuthenticationResponse>(
-                true, 200,
-                "User registered successfully",
-                new List<AuthenticationResponse> { authenticationResponse }));
+        return ApiResponseHelper.Success(authenticationResponse, "User registered successfully");
     }
 
     [HttpPost("logout")]
@@ -118,9 +113,6 @@ public class AuthController : ControllerBase
 
         await _userManager.UpdateAsync(user);
 
-        return Ok(new ApiResponse<AuthenticationResponse>(
-                true, 200,
-                "User logged in successfully",
-                new List<AuthenticationResponse> { authenticationResponse }));
+        return ApiResponseHelper.Success(authenticationResponse, "User logged in successfully");
     }
 }
