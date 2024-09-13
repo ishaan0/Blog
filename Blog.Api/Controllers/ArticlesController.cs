@@ -6,6 +6,7 @@ using Blog.Application.Articles.CreateArticle;
 using Blog.Application.Articles.GetArticles;
 using Blog.Application.Articles.GetById;
 using Blog.Application.Dtos.Articles;
+using Blog.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,8 @@ namespace Blog.Api.Controllers;
 public class ArticlesController(ISender mediator, IMapper mapper) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ArticleResponse>>> GetArticles(
+    [ProducesResponseType(typeof(ApiResponse<PaginatedList<ArticleResponse>>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetArticles(
         [FromQuery] GetArticlesDto getArticleDto,
         CancellationToken cancellationToken)
     {
@@ -24,7 +26,7 @@ public class ArticlesController(ISender mediator, IMapper mapper) : ControllerBa
 
         var articles = await mediator.Send(query, cancellationToken);
 
-        return Ok(articles.Items);
+        return ApiResponseHelper.Success(articles, "Articles fetched successfully");
     }
 
     [HttpPost]

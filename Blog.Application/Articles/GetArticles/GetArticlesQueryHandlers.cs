@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Blog.Application.Articles.Common;
-using Blog.Application.Dtos.Articles;
 using Blog.Application.Interfaces.Repositories;
 using Blog.Domain.Models;
 using MediatR;
@@ -14,13 +13,8 @@ public class GetArticlesQueryHandlers(IMapper mapper, IArticleRepository article
         GetArticlesQuery request,
         CancellationToken cancellationToken)
     {
-        var articles = await articleRepository.GetArticlesAsync(mapper.Map<GetArticlesDto>(request), false);
+        var articlePaginatedList = await articleRepository.GetArticlesAsync(request, false);
 
-        return new PaginatedList<ArticleResponse>(
-           mapper.Map<List<ArticleResponse>>(articles),
-           new PaginationMetadata(
-               articles.Count(), request.PageNumber, request.PageSize));
-
-
+        return articlePaginatedList;
     }
 }

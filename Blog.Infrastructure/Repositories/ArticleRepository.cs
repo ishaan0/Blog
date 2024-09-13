@@ -1,8 +1,11 @@
-﻿using Blog.Application.Dtos.Articles;
+﻿using AutoMapper;
+using Blog.Application.Articles.Common;
+using Blog.Application.Articles.GetArticles;
 using Blog.Application.Extensions;
 using Blog.Application.Interfaces.Repositories;
 using Blog.Domain.Entities;
 using Blog.Domain.Enums;
+using Blog.Domain.Models;
 using Blog.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,11 +13,14 @@ namespace Blog.Infrastructure.Repositories;
 
 public class ArticleRepository : GenericRepository<Article>, IArticleRepository
 {
-    public ArticleRepository(ApplicationDbContext context) : base(context)
-    { }
+    private readonly IMapper _mapper;
+    public ArticleRepository(ApplicationDbContext context, IMapper mapper) : base(context)
+    {
+        _mapper = mapper;
+    }
 
-    public async Task<IEnumerable<Article>> GetArticlesAsync(
-        GetArticlesDto getArticlesDto,
+    public async Task<PaginatedList<ArticleResponse>> GetArticlesAsync(
+        GetArticlesQuery getArticlesQuery,
         bool trackChanges,
         CancellationToken cancellationToken = default)
     {
@@ -22,35 +28,33 @@ public class ArticleRepository : GenericRepository<Article>, IArticleRepository
                         ? _dbSet.AsNoTracking().AsQueryable()
                         : _context.Articles.AsQueryable();
 
-        if (!string.IsNullOrEmpty(getArticlesDto.Tag))
+        if (!string.IsNullOrEmpty(getArticlesQuery.Tag))
         {
-            query = query.Where(a => a.Tags.Any(t => t.Name == getArticlesDto.Tag));
+            query = query.Where(a => a.Tags.Any(t => t.Name == getArticlesQuery.Tag));
         }
 
-        if (getArticlesDto.OwnerId.HasValue)
+        if (getArticlesQuery.OwnerId.HasValue)
         {
-            query = query.Where(a => a.AuthorId == getArticlesDto.OwnerId.Value);
+            query = query.Where(a => a.AuthorId == getArticlesQuery.OwnerId.Value);
         }
 
-        if (!string.IsNullOrEmpty(getArticlesDto.Search))
+        if (!string.IsNullOrEmpty(getArticlesQuery.Search))
         {
-            query = query.Where(a => a.Title.Contains(getArticlesDto.Search) || a.Body.Contains(getArticlesDto.Search));
+            query = query.Where(a => a.Title.Contains(getArticlesQuery.Search) || a.Body.Contains(getArticlesQuery.Search));
         }
 
-        if (getArticlesDto.Published.HasValue)
+        if (getArticlesQuery.Published.HasValue)
         {
-            query = getArticlesDto.Published.Value
+            query = getArticlesQuery.Published.Value
                 ? query.Where(a => a.Status == ArticleStatus.Public)
                 : query.Where(a => a.Status == ArticleStatus.Private);
         }
 
-        query = query.Sort(a => a.Title, getArticlesDto.SortOrder ?? SortOrder.Ascending);
+        query = query.Sort(a => a.Title, getArticlesQuery.SortOrder ?? SortOrder.Ascending);
 
-        var aritles = await query
-            .GetPage(getArticlesDto.PageNumber, getArticlesDto.PageSize)
-            .ToListAsync(cancellationToken);
-
-        return aritles;
+        return await query.ToPaginatedList<Article, ArticleResponse>(
+                getArticlesQuery.PageNumber, getArticlesQuery.PageSize,
+                article => _mapper.Map<ArticleResponse>(article));
     }
 
 }
