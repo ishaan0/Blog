@@ -23,14 +23,12 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Authentic
         UserManager<User> userManager,
         SignInManager<User> signInManager,
         RoleManager<Role> roleManager,
-        IValidator<RegisterCommand> registerCommandValidator,
         IMapper mapper,
         IJwtService jwtService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _roleManager = roleManager;
-        _registerCommandValidator = registerCommandValidator;
         _mapper = mapper;
         _jwtService = jwtService;
     }
@@ -38,13 +36,6 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Authentic
         RegisterCommand request,
         CancellationToken cancellationToken = default)
     {
-        var validatorResult = await _registerCommandValidator.ValidateAsync(request);
-        if (!validatorResult.IsValid)
-        {
-            var errorMessage = string.Join(" | ", validatorResult.Errors.Select(error => error));
-            throw new BadRequestException(errorMessage);
-        }
-
         bool validRole = await _roleManager.RoleExistsAsync(nameof(UserType.User));
         if (!validRole) throw new BadRequestException("User role doen't exist");
 

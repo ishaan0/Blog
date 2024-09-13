@@ -1,11 +1,10 @@
 ﻿using Blog.Api.Middlewares;
 using Blog.Application;
 using Blog.Application.Articles.CreateArticle;
+using Blog.Application.Dtos.Auth;
 using Blog.Application.Interfaces;
 using Blog.Application.Interfaces.Repositories;
 using Blog.Application.Services;
-using Blog.Application.Users.Login;
-using Blog.Application.Users.Register;
 using Blog.Application.Validators.Article;
 using Blog.Application.Validators.Auth;
 using Blog.Domain.Entities;
@@ -73,10 +72,10 @@ namespace Blog.Api.StartupExtensions
             services.AddScoped<IArticleRepository, ArticleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
 
-            services.AddTransient<IJwtService, JwtService>();
+            services.AddScoped<IJwtService, JwtService>();
 
-            services.AddScoped<IValidator<RegisterCommand>, RegisterCommandValidator>();
-            services.AddScoped<IValidator<LoginCommand>, LoginCommandValidator>();
+            services.AddScoped<IValidator<RegisterRequestDto>, RegisterRequestDtoValidator>();
+            services.AddScoped<IValidator<LoginRequestDto>, LoginRequestDtoValidator>();
             services.AddScoped<IValidator<CreateArticleCommand>, CreateArticleCommandValidator>();
 
 
@@ -101,7 +100,7 @@ namespace Blog.Api.StartupExtensions
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(setup =>
             {
-                setup.SwaggerDoc("v1", new OpenApiInfo { Title = "Hotel booking API", Version = "v1" });
+                setup.SwaggerDoc("v1", new OpenApiInfo { Title = "Blog API", Version = "v1" });
 
                 setup.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
