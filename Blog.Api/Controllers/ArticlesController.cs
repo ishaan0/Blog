@@ -59,7 +59,7 @@ public class ArticlesController(
 
         var article = await mediator.Send(query, cancellationToken);
 
-        return ApiResponseHelper.Success(article);
+        return ApiResponseHelper.Success(article, "article fetched successfully");
     }
 
 

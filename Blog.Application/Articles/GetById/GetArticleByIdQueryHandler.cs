@@ -15,7 +15,6 @@ public class GetArticleByIdQueryHandler(
 {
     public async Task<ArticleResponse> Handle(GetArticleByIdQuery request, CancellationToken cancellationToken)
     {
-
         var articles = await repository.GetByCondition(
             a => a.Id == request.Id, false,
             cancellationToken).ToListAsync();
