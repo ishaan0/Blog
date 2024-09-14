@@ -1,6 +1,8 @@
-﻿using Blog.Domain.Exceptions;
+﻿using Blog.Api.Helpers;
+using Blog.Domain.Exceptions;
+using Blog.Domain.Models;
 using Microsoft.AspNetCore.Diagnostics;
-using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Blog.Api.Middlewares
 {
@@ -15,18 +17,17 @@ namespace Blog.Api.Middlewares
 
             var (statusCode, title, detail) = MapExceptionToProblemInformation(exception);
 
-            await Results.Problem(
-                statusCode: statusCode,
-                title: title,
-                detail: detail,
-                extensions: new Dictionary<string, object?>
-                {
-                    ["traceId"] = Activity.Current?.Id ?? httpContext.TraceIdentifier
-                }
-            ).ExecuteAsync(httpContext);
+            var responseObjectResult = ApiResponseHelper.Error(
+                    title, statusCode, new List<string>() { detail }) as ObjectResult;
+
+            var errorResponse = responseObjectResult.Value as ApiErrorResponse;
+
+            httpContext.Response.ContentType = "application/json";
+            httpContext.Response.StatusCode = statusCode;
+
+            await httpContext.Response.WriteAsJsonAsync(errorResponse, cancellationToken);
 
             return true;
-
         }
 
         private void LogException(Exception exception)

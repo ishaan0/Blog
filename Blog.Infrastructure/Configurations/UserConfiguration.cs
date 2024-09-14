@@ -12,10 +12,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(u => u.Name)
             .IsRequired()
-            .HasMaxLength(20);
+            .HasMaxLength(50);
 
         builder.Property(u => u.Bio)
-            .IsRequired()
-            .HasMaxLength(50);
+            .HasMaxLength(100);
     }
 }

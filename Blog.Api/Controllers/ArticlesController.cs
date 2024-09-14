@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
-using Blog.Api.Dtos.Articles;
 using Blog.Api.Helpers;
 using Blog.Application.Articles.Common;
 using Blog.Application.Articles.CreateArticle;
 using Blog.Application.Articles.GetArticles;
 using Blog.Application.Articles.GetById;
 using Blog.Application.Dtos.Articles;
+using Blog.Domain.Models;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,10 +14,14 @@ namespace Blog.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ArticlesController(ISender mediator, IMapper mapper) : ControllerBase
+public class ArticlesController(
+    ISender mediator,
+    IMapper mapper,
+    IValidator<CreateArticleDto> createArticleDtoValidator) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ArticleResponse>>> GetArticles(
+    [ProducesResponseType(typeof(ApiResponse<PaginatedList<ArticleResponse>>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetArticles(
         [FromQuery] GetArticlesDto getArticleDto,
         CancellationToken cancellationToken)
     {
@@ -24,19 +29,27 @@ public class ArticlesController(ISender mediator, IMapper mapper) : ControllerBa
 
         var articles = await mediator.Send(query, cancellationToken);
 
-        return Ok(articles.Items);
+        return ApiResponseHelper.Success(articles, "Articles fetched successfully");
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateArticle(
-        [FromBody] ArticleCreationRequest request,
+        [FromBody] CreateArticleDto createArticleDto,
         CancellationToken cancellationToken)
     {
-        var command = mapper.Map<CreateArticleCommand>(request);
+        var validatorResult = await createArticleDtoValidator.ValidateAsync(createArticleDto);
+
+        if (!validatorResult.IsValid)
+        {
+            var errorMessages = validatorResult.Errors.Select(error => error.ErrorMessage).ToList();
+            return ApiResponseHelper.BadRequest("Bad request", errorMessages);
+        }
+
+        var command = mapper.Map<CreateArticleCommand>(createArticleDto);
 
         var articleId = await mediator.Send(command, cancellationToken);
 
-        return ApiResponseHelper.Created(nameof(CreateArticle), articleId);
+        return ApiResponseHelper.Created(nameof(CreateArticle), articleId, "Article created successfully");
     }
 
     [HttpGet("{id:guid}", Name = "GetArticleById")]

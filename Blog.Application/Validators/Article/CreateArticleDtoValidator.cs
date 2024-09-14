@@ -1,13 +1,13 @@
-﻿using Blog.Application.Articles.CreateArticle;
+﻿using Blog.Application.Dtos.Articles;
 using Blog.Application.Interfaces.Repositories;
 using FluentValidation;
 
 namespace Blog.Application.Validators.Article;
 
-public class CreateArticleCommandValidator : AbstractValidator<CreateArticleCommand>
+public class CreateArticleDtoValidator : AbstractValidator<CreateArticleDto>
 {
     private readonly IUserRepository _userRepository;
-    public CreateArticleCommandValidator(IUserRepository userRepository)
+    public CreateArticleDtoValidator(IUserRepository userRepository)
     {
         _userRepository = userRepository;
 
@@ -30,6 +30,5 @@ public class CreateArticleCommandValidator : AbstractValidator<CreateArticleComm
     private async Task<bool> BeValidUser(Guid authorId, CancellationToken cancellationToken = default)
     {
         return await _userRepository.AuthorExistAsync(authorId, cancellationToken);
-        //return await _context.Users.AnyAsync(u => u.Id == authorId, cancellationToken);
     }
 }

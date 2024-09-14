@@ -1,8 +1,8 @@
 ﻿using Blog.Domain.Enums;
 
-namespace Blog.Api.Dtos.Articles;
+namespace Blog.Application.Dtos.Articles;
 
-public class ArticleCreationRequest
+public class CreateArticleDto
 {
     public string Title { get; set; }
     public string Body { get; set; }

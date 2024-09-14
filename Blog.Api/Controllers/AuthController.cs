@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Blog.Api.Dtos.Auth;
 using Blog.Api.Helpers;
 using Blog.Application.Dtos;
+using Blog.Application.Dtos.Auth;
 using Blog.Application.Interfaces;
 using Blog.Application.Users.Common;
 using Blog.Application.Users.Login;
@@ -25,7 +25,8 @@ public class AuthController : ControllerBase
     private readonly SignInManager<User> _signInManager;
     private readonly RoleManager<Role> _roleManager;
     private readonly IJwtService _jwtService;
-    private readonly IValidator<RegisterRequest> _registerRequestValidator;
+    private readonly IValidator<RegisterRequestDto> _registerRequestDtoValidator;
+    private readonly IValidator<LoginRequestDto> _loginRequestDtoValidator;
     private readonly IMapper _mapper;
     private readonly ISender _mediator;
 
@@ -34,7 +35,8 @@ public class AuthController : ControllerBase
         SignInManager<User> signInManager,
         RoleManager<Role> roleManager,
         IJwtService jwtService,
-        IValidator<RegisterRequest> registerRequestValidator,
+        IValidator<RegisterRequestDto> registerRequestDtoValidator,
+        IValidator<LoginRequestDto> loginRequestDtoValidator,
         IMapper mapper,
         ISender mediator)
     {
@@ -42,7 +44,8 @@ public class AuthController : ControllerBase
         _signInManager = signInManager;
         _roleManager = roleManager;
         _jwtService = jwtService;
-        _registerRequestValidator = registerRequestValidator;
+        _registerRequestDtoValidator = registerRequestDtoValidator;
+        _loginRequestDtoValidator = loginRequestDtoValidator;
         _mapper = mapper;
         _mediator = mediator;
     }
@@ -51,10 +54,17 @@ public class AuthController : ControllerBase
     [ProducesResponseType(typeof(ApiResponse<AuthenticationResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register(
-        RegisterRequest request,
+        [FromBody] RegisterRequestDto registerRequestDto,
         CancellationToken cancellationToken)
     {
-        var registerCommand = _mapper.Map<RegisterCommand>(request);
+        var validatorResult = await _registerRequestDtoValidator.ValidateAsync(registerRequestDto);
+        if (!validatorResult.IsValid)
+        {
+            var errorMessages = validatorResult.Errors.Select(error => error.ErrorMessage).ToList();
+            return ApiResponseHelper.BadRequest("Bad request", errorMessages);
+        }
+
+        var registerCommand = _mapper.Map<RegisterCommand>(registerRequestDto);
 
         var authenticationResponse = await _mediator.Send(registerCommand, cancellationToken);
 
@@ -66,14 +76,21 @@ public class AuthController : ControllerBase
     [ProducesResponseType(typeof(ApiResponse<AuthenticationResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Login(
-        LoginRequest request,
+        [FromBody] LoginRequestDto request,
         CancellationToken cancellationToken)
     {
+        var validatorResult = _loginRequestDtoValidator.Validate(request);
+        if (!validatorResult.IsValid)
+        {
+            var errorMessages = validatorResult.Errors.Select(error => error.ErrorMessage).ToList();
+            return ApiResponseHelper.BadRequest("Bad request", errorMessages);
+        }
+
         var loginCommand = _mapper.Map<LoginCommand>(request);
 
-        AuthenticationResponse authenticationResponse = await _mediator.Send(loginCommand, cancellationToken);
+        var authenticationResponse = await _mediator.Send(loginCommand, cancellationToken);
 
-        return ApiResponseHelper.Success(authenticationResponse, "User registered successfully");
+        return ApiResponseHelper.Success(authenticationResponse, "User logged in successfully");
     }
 
     [HttpPost("logout")]

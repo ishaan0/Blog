@@ -1,6 +1,6 @@
-﻿namespace Blog.Api.Dtos.Auth;
+﻿namespace Blog.Application.Dtos.Auth;
 
-public class RegisterRequest
+public class RegisterRequestDto
 {
     public string Name { get; init; }
     public string Email { get; init; }
