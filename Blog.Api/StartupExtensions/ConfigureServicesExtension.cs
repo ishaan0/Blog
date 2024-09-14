@@ -1,6 +1,6 @@
 ﻿using Blog.Api.Middlewares;
 using Blog.Application;
-using Blog.Application.Articles.CreateArticle;
+using Blog.Application.Dtos.Articles;
 using Blog.Application.Dtos.Auth;
 using Blog.Application.Interfaces;
 using Blog.Application.Interfaces.Repositories;
@@ -76,7 +76,7 @@ namespace Blog.Api.StartupExtensions
 
             services.AddScoped<IValidator<RegisterRequestDto>, RegisterRequestDtoValidator>();
             services.AddScoped<IValidator<LoginRequestDto>, LoginRequestDtoValidator>();
-            services.AddScoped<IValidator<CreateArticleCommand>, CreateArticleCommandValidator>();
+            services.AddScoped<IValidator<CreateArticleDto>, CreateArticleDtoValidator>();
 
 
             return services;
