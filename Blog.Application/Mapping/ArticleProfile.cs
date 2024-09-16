@@ -2,6 +2,7 @@
 using Blog.Application.Articles.Common;
 using Blog.Application.Articles.CreateArticle;
 using Blog.Application.Articles.GetArticles;
+using Blog.Application.Articles.UpdateArticle;
 using Blog.Application.Dtos.Articles;
 using Blog.Domain.Entities;
 
@@ -16,5 +17,7 @@ public class ArticleProfile : Profile
         CreateMap<Article, ArticleResponse>();
 
         CreateMap<CreateArticleCommand, Article>();
+
+        CreateMap<UpdateArticleDto, UpdateArticleCommand>();
     }
 }

@@ -77,6 +77,7 @@ namespace Blog.Api.StartupExtensions
             services.AddScoped<IValidator<RegisterRequestDto>, RegisterRequestDtoValidator>();
             services.AddScoped<IValidator<LoginRequestDto>, LoginRequestDtoValidator>();
             services.AddScoped<IValidator<CreateArticleDto>, CreateArticleDtoValidator>();
+            services.AddScoped<IValidator<UpdateArticleDto>, UpdateArticleDtoValidator>();
 
 
             return services;
