@@ -2,6 +2,7 @@
 using Blog.Api.Helpers;
 using Blog.Application.Articles.Common;
 using Blog.Application.Articles.CreateArticle;
+using Blog.Application.Articles.DeleteArticle;
 using Blog.Application.Articles.GetArticles;
 using Blog.Application.Articles.GetById;
 using Blog.Application.Articles.UpdateArticle;
@@ -89,5 +90,17 @@ public class ArticlesController(
         return ApiResponseHelper.NoContent();
     }
 
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteArticle(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var command = new DeleteArticleCommand() { Id = id };
+        await mediator.Send(command, cancellationToken);
+
+        return ApiResponseHelper.NoContent();
+    }
 
 }
