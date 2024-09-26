@@ -2,11 +2,13 @@
 using Blog.Application;
 using Blog.Application.Dtos.Articles;
 using Blog.Application.Dtos.Auth;
+using Blog.Application.Dtos.Comments;
 using Blog.Application.Interfaces;
 using Blog.Application.Interfaces.Repositories;
 using Blog.Application.Services;
 using Blog.Application.Validators.Article;
 using Blog.Application.Validators.Auth;
+using Blog.Application.Validators.Comments;
 using Blog.Domain.Entities;
 using Blog.Domain.IdentityEntities;
 using Blog.Infrastructure.Data;
@@ -71,6 +73,7 @@ namespace Blog.Api.StartupExtensions
             services.AddScoped<IGenericRepository<Article>, GenericRepository<Article>>();
             services.AddScoped<IArticleRepository, ArticleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ICommentRepository, CommentRepository>();
 
             services.AddScoped<IJwtService, JwtService>();
 
@@ -78,6 +81,7 @@ namespace Blog.Api.StartupExtensions
             services.AddScoped<IValidator<LoginRequestDto>, LoginRequestDtoValidator>();
             services.AddScoped<IValidator<CreateArticleDto>, CreateArticleDtoValidator>();
             services.AddScoped<IValidator<UpdateArticleDto>, UpdateArticleDtoValidator>();
+            services.AddScoped<IValidator<CreateCommentDto>, CreateCommentDtoValidator>();
 
 
             return services;
